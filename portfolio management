@@ -1,0 +1,294 @@
+component\\
+
+
+
+<aura:component  controller="A4"  implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction" access="global"  >
+	   
+     <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+      <aura:attribute  name="CustomList" type="list"/>
+    <aura:attribute  name="clist" type="list"/>
+       
+     <div class="slds-size_4-of-8">
+      <div class="slds-p-around-small">
+      <div  style="background-color:white" class="slds-box slds-box_small">
+          
+          
+       <div style="color:red">  <div class="slds-m-top_xx-large" height="10rem">  <div class="slds-page-header"> <div class="slds-align--absolute-center" ><div class="slds-text-heading--large"> PERSONAL PORTFOLIO MANAGEMENT</div> </div></div></div></div>   
+          <hr/>
+          <lightning:select name="selectItem" label="SELECT CUSTOMER" aura:id="ac" onchange="{!c.getDetail}"  >
+       <option value="null">None</option>
+        <aura:iteration items="{!v.CustomList}" var="acc">
+            <option label="{!acc.Name}" value="{!acc.Id}" />
+        </aura:iteration>
+    </lightning:select> 
+          
+         </div>
+         
+         <div style="text-align:center;font-size:25px;color:GREEN" >
+          DETAILS
+        </div>
+    
+     <table class="slds-table slds-table--bordered slds-table--striped"> 
+     <thead>
+            <tr>
+                 <th scope="col"><span class="slds-truncate" Style="color:Green"> Assets</span></th>
+                 <th scope="col"><span class="slds-truncate"> Initial Investment price</span></th>
+                <th scope="col"><span class="slds-truncate"> latest price</span></th>
+                <th scope="col"><span class="slds-truncate" Style="color:green"> Profit/Loss</span></th>
+               
+            </tr>
+        </thead>
+         
+         <tbody>     
+         
+          <aura:iteration items="{!v.clist}" var="con" >
+                  <tr>
+                      <td><lightning:formattedUrl value="https://deekshithinduction-dev-ed.lightning.force.com/lightning/o/Stock__c/list?filterName=00B8d000006SQXeEAO" label="STOCKS" tooltip="Go to STOCK's recordId" >Stocks</lightning:formattedUrl></td>
+                     <td>{!con.Stock_Amount__c	}</td>
+                    <td>{!con.StockLatestAmount__c}</td>
+                      <td>{!con.Stock_Profit_Loss__c}</td>
+                   </tr>
+                   
+                  <tr>
+                      <td><lightning:formattedUrl value="https://deekshithinduction-dev-ed.lightning.force.com/lightning/o/Mutual_fund__c/list?filterName=00B8d000006SQf4EAG" label="MUTUAL FUND" tooltip="Go to MUTUAL FUND's recordId" >Mutual fund</lightning:formattedUrl></td>
+                     <td>{!con.Mutual_Investment__c}</td>
+                    <td>{!con.Mutual_Latest_Price__c}</td>
+                      <td>{!con.Mutual_Fund_Profit_Loss__c}</td>
+                      
+                   </tr>
+              
+                <tr>
+                      <td><lightning:formattedUrl value="https://deekshithinduction-dev-ed.lightning.force.com/lightning/o/Loan__c/list?filterName=00B8d000006SQc5EAG" label="LOANS" tooltip="Go to LOAN's recordId" >loans</lightning:formattedUrl></td>
+                     <td>{!con.Loan_Invest_Amount__c	}</td>
+                    <td>{!con.Loan_Latest_Price__c }</td>
+                    <td>{!con.Loan_Profit_Loss__c}</td>
+                   </tr>
+              
+              <tr>
+                     <td><lightning:formattedUrl value="https://deekshithinduction-dev-ed.lightning.force.com/lightning/o/Bullion__c/list?filterName=00B8d000006SQfdEAG" label="BULLIONS" tooltip="Go to BULLION's recordId" >bullions</lightning:formattedUrl></td>
+                     <td>{!con.Bullion_Investment_price__c	}</td>
+                    <td>{!con.Bullion_Latest_price__c }</td>
+                  <td>{!con.Bullion_Profit_Loss__c}</td>
+                   </tr>
+              
+              <tr>
+                      <td><lightning:formattedUrl value="https://deekshithinduction-dev-ed.lightning.force.com/lightning/o/Fixed_depost__c/list?filterName=00B8d000006SQfxEAG" label="FIXED DEPOSITES" tooltip="Go to Fixed deposites's recordId" >fixed deposite</lightning:formattedUrl></td>
+                     <td>{!con.Fixed_deposit_Investment_Price__c}</td>
+                    <td>{!con.Fixed_deposit_total_amount__c}</td>
+                  <td>{!con.Fixed_Deposit_Profit_Loss__c}</td>
+                   </tr>
+              
+               <tr>
+                      <td Style="color:RED" class="slds-text-heading_medium">TOTAL VALUE</td>
+                     <td  class="slds-text-heading_medium">{!con.Assets_Total_Invest_Price__c}</td>
+                    <td  class="slds-text-heading_medium">{!con.Assets_Total_Latest_Price__c}</td>
+                   <td  class="slds-text-heading_medium"><lightning:button>{!con.Assets_Profit_Loss__c}</lightning:button></td>
+                   </tr>
+              
+           </aura:iteration> 
+ 
+         </tbody>
+    
+    </table>
+    </div>
+    </div>
+   
+</aura:component>
+
+
+controller\\
+
+({
+	doInit : function(component, event, helper) {
+    debugger;
+        helper.getAllAccount(component, event, helper);
+    },
+        getDetail: function(component, event, helper){
+        
+        helper.helperGetDetaill(component, event, helper);
+        
+    }
+    
+})
+
+
+apex//
+
+public class A4 {
+   @auraEnabled
+    public static list<Customer> fetchCustomer(){
+        list<Customer> accList= new list<Customer>();
+        accList=[select name,Mutual_Investment__c,
+                 Phone_Number__c,
+                 Loan_Invest_Amount__c,
+                 Loan_Latest_Price__c,
+                 Stock_Amount__c,
+                 Bullion_Investment_price__c,
+                 Bullion_Latest_price__c,
+                 StockLatestAmount__c,
+                 Fixed_deposit_Investment_Price__c,
+                 Fixed_deposit_total_amount__c,
+                 Mutual_Latest_Price__c,
+                 Stock_Profit_Loss__c,
+                 Mutual_Fund_Profit_Loss__c,
+                 Loan_Profit_Loss__c,
+                 Bullion_Profit_Loss__c,
+                 Fixed_Deposit_Profit_Loss__c,
+                 Assets_Profit_Loss__c,
+                 Assets_Total_Invest_Price__c,
+                 Assets_Total_Latest_Price__c
+                 from Customer];
+       
+                 return accList;
+    }
+    
+     @auraEnabled
+     public static list<Customer> CustomerDetails(String ID){
+        list<Customer> accList= new list<Customer>();
+        accList=[select name,
+                 Mutual_Investment__c,
+                 Phone_Number__c,
+                 Stock_Amount__c,
+                 Loan_Latest_Price__c,
+                 Loan_Invest_Amount__c,
+                 Bullion_Investment_price__c,
+                 Bullion_Latest_price__c,
+                 StockLatestAmount__c,
+                 Fixed_deposit_Investment_Price__c,
+                 Fixed_deposit_total_amount__c,
+                 Mutual_Latest_Price__c,
+                 Stock_Profit_Loss__c
+                 ,Mutual_Fund_Profit_Loss__c,
+                 Loan_Profit_Loss__c,
+                 Bullion_Profit_Loss__c,
+                 Fixed_Deposit_Profit_Loss__c,
+                 Assets_Profit_Loss__c,
+                 Assets_Total_Invest_Price__c,
+                 Assets_Total_Latest_Price__c
+                 from Customer where id=:ID];
+        
+                  return accList;
+    }
+}
+
+
+css//
+
+.THIS {
+}
+.THIS.slds-size_4-of-8{
+    margin-left:420px;
+}
+.THIS.a{
+color:red;
+}
+
+
+app
+
+<aura:application extends="force:slds" >
+	
+    <c:A4/> 
+    
+</aura:application>
+
+
+stocks//
+
+trigger StockTrigger on Stock__c (after insert, after update, after delete) {
+
+Map<Id, List<Stock__c>> CustIdStockListMap = new Map<Id, List<Stock__c>>();
+Set<Id> custIds = new Set<Id>();
+List<Stock__c> StockList = new List<Stock__c>();
+if(trigger.isUpdate || trigger.isInsert){
+for(Stock__c str : trigger.New){  
+if(str.Customer__c != null){        
+custIds.add(str.Customer__c);       
+}
+}
+}
+if(trigger.isDelete){
+for(Stock__c str : trigger.old){
+if(str.Customer__c != null){
+custIds.add(str.Customer__c);
+}
+}
+}
+if(custIds.size() > 0){
+StockList = [SELECT Latest_Price__c,Customer__c,Latest_Pricee__c,Investment_Price__c FROM Stock__c WHERE Customer__c IN : custIds];
+for(Stock__c str : StockList ){
+if(! CustIdStockListMap.containsKey(str.Customer__c)){     //1
+ CustIdStockListMap.put(str.Customer__c, new List<Stock__c>());//2
+}
+ CustIdStockListMap.get(str.Customer__c).add(str);//4
+}
+List<Customer> cstmList = new List<Customer>();
+cstmList = [SELECT Stock_Amount__c,StockLatestAmount__c FROM Customer WHERE Id IN: custIds];
+for(Customer acct : cstmList){
+List<Stock__c> tempStrList = new List<Stock__c>();
+tempStrList =  CustIdStockListMap.get(acct.Id);//3 acctList
+Double StockInvestAmount = 0;
+Double StockLatestAmount = 0;
+for(Stock__c str : tempStrList){
+if(str.Investment_Price__c != null && str.Latest_Pricee__c!=null){
+StockInvestAmount += str.Investment_Price__c;
+StockLatestAmount += str.Latest_Pricee__c;  
+}
+}
+acct.Stock_Amount__c = StockInvestAmount;
+acct.StockLatestAmount__c	= StockLatestAmount;
+}
+update cstmList;
+}
+}
+
+loans//
+
+
+
+trigger LoanTrigger on Loan__c (after insert, after update, after delete)
+{
+ Map<Id, List<Loan__c>> CustIdStockListMap = new Map<Id, List<Loan__c>>();
+Set<Id> custIds = new Set<Id>();
+List<Loan__c> StockList = new List<Loan__c>();
+if(trigger.isUpdate || trigger.isInsert){
+for(Loan__c str : trigger.New){  //1
+if(str.Customer__c != null){        //2
+custIds.add(str.Customer__c);        //3
+}
+}
+}
+if(trigger.isDelete){
+for(Loan__c str : trigger.old){
+if(str.Customer__c != null){
+custIds.add(str.Customer__c);
+}
+}
+}
+if(custIds.size() > 0){
+StockList = [SELECT Loan_Amount__c,Total_Amount_paid__c	,Customer__c FROM Loan__c WHERE Customer__c IN : custIds];
+for(Loan__c str : StockList ){
+if(! CustIdStockListMap.containsKey(str.Customer__c)){     //1
+ CustIdStockListMap.put(str.Customer__c, new List<Loan__c>());//2
+}
+ CustIdStockListMap.get(str.Customer__c).add(str);//4
+}
+List<Customer> cstmList = new List<Customer>();
+cstmList = [SELECT Stock_Amount__c,StockLatestAmount__c FROM Customer WHERE Id IN: custIds];
+for(Customer acct : cstmList){
+List<Loan__c> tempStrList = new List<Loan__c>();
+tempStrList =  CustIdStockListMap.get(acct.Id);//3 acctList
+Double StockInvestAmount = 0;
+Double StockLatestAmount = 0;
+for(Loan__c str : tempStrList){
+if(str.Loan_Amount__c != null && str.Total_Amount_paid__c!=null){
+StockInvestAmount += str.Loan_Amount__c;
+StockLatestAmount += str.Total_Amount_paid__c;  
+}
+}
+acct.Loan_Invest_Amount__c = StockInvestAmount;
+acct.Loan_Latest_Price__c	= StockLatestAmount;
+}
+update cstmList;
+}
+}
